@@ -1,0 +1,29 @@
+{
+  "name": "WatchRunner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "contributes": {
+    "commands":[
+      {
+        "command": "WatchRunner.run",
+        "title": "WatchRunner.run"
+      }
+    ]
+  },
+  "engines": {
+    "vscode": "^1.51.0"
+  },  
+  "dependencies": {
+    "@types/node": "^24.10.0",
+    "@types/vscode": "^1.105.0",
+    "typescript": "^5.9.3"
+  }
+}
