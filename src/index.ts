@@ -71,6 +71,21 @@ async function get_runners(top_workspaces:string[]){
   }
   return ans
 }
+function run_runners(runners:Runner[]){
+  const exists=new Set<string>
+  for (const term of vscode.window.terminals){
+    exists.add(term.name)
+  }
+  for (const runner of runners){
+    const name=runner.relative_filename
+    if (!exists.has(name)){
+      const term = vscode.window.createTerminal({ name });
+      term.sendText(`cd ${runner.run_dir}`);
+      term.sendText(`node ${runner.full_filename}`);
+    }
+  }
+ 
+}
 
 export function activate(context: vscode.ExtensionContext) {
   // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -85,6 +100,8 @@ export function activate(context: vscode.ExtensionContext) {
     const {workspaceFolders}=vscode.workspace
     const folders=/*['c:\\yigal\\watch_runner_extension']//*/(workspaceFolders||[]).map(x=>x.uri.fsPath)
     const runners=await get_runners(folders)
+    run_runners(runners)
+
     outputChannel.append(JSON.stringify({runners,folders},null,2))
     // The code you place here will be executed every time your command is executed
     
