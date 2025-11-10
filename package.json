@@ -1,29 +1,41 @@
 {
-  "name": "WatchRunner",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/index.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "contributes": {
-    "commands":[
-      {
-        "command": "WatchRunner.run",
-        "title": "WatchRunner.run"
-      }
-    ]
-  },
-  "engines": {
-    "vscode": "^1.51.0"
-  },  
-  "dependencies": {
-    "@types/node": "^24.10.0",
-    "@types/vscode": "^1.105.0",
-    "typescript": "^5.9.3"
-  }
+    "name": "WatchRunnerExtension",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "types/src/index.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "watch_tsc": "node ./bin/watch_tsc.ts",
+        "build": "node ./bin/run_build.ts",
+        "watch_build": "node ./bin/watch_build.ts",
+        "watch_eslint": "node  ./bin/watch_eslint.ts"
+    },
+    "keywords": [],
+    "contributes": {
+        "commands": [
+            {
+                "command": "WatchRunner.run",
+                "title": "WatchRunner.run"
+            }
+        ]
+    },
+    "engines": {
+        "vscode": "^1.51.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "9.39.1",
+        "@types/node": "24.10.0",
+        "@types/vscode": "^1.105.0",
+        "esbuild": "0.25.12",
+        "eslint-plugin-import-x": "4.16.1",
+        "typescript": "5.9.3",
+        "typescript-eslint": "8.46.3"
+    },
+    "dependencies": {
+        "@yigal/watch_runner": "^2.0.0"
+    }
 }

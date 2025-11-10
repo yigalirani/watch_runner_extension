@@ -1,0 +1,6 @@
+import { getPackages } from "@manypkg/get-packages";
+async function test_it(folder:string){
+  const a= await getPackages(folder)
+  console.log(a)
+}
+await test_it("c:\\yigal\\million_try3")

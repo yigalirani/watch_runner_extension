@@ -1,0 +1,100 @@
+import { getPackages } from "@manypkg/get-packages";
+
+async function get_sub_folders(start:string[]){
+    const ans=[]
+    for (const folder of start){
+      ans.push(folder)
+      const a= await getPackages(folder);
+      console.log(a)
+      if (workspaces==null)
+        continue
+      for (const workspace of workspaces)
+        ans.push(workspace.location)
+    }
+    return ans
+}
+
+function getCommonPrefix(paths: string[]): string {
+  if (paths.length === 0) return "";
+  if (paths.length === 1) return paths[0];
+
+  // Split each path into parts (e.g., by "/" or "\\")
+  const splitPaths = paths.map(p => p.split(/[\\/]+/));
+
+  const commonParts: string[] = [];
+  const first = splitPaths[0];
+
+  for (let i = 0; i < first.length; i++) {
+    const part = first[i];
+    if (splitPaths.every(p => p[i] === part)) {
+      commonParts.push(part);
+    } else {
+      break;
+    }
+  }
+
+  // Join back with "/" (or use path.join for platform-specific behavior)
+  return commonParts.join("/");
+}
+
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
+
+interface Runner {
+  relative_filename: string;
+  full_filename: string;
+  run_dir: string; // same as full_filename, except trims last leg if it is '/bin'
+}
+
+/**
+ * Search for files named watch_*.ts|js|mjs in each given directory and its 'bin' subdirectory.
+ * Non-recursive.
+ */
+export async function findWatchRunners(paths: string[]): Promise<Runner[]> {
+  const commonPrefix=getCommonPrefix(paths)
+  const results: Runner[] = [];
+
+  // Regex for allowed watch_* files
+  const filePattern = /^watch_.*\.(ts|js|mjs)$/;
+
+  for (const basePath of paths) {
+    // Check both the path itself and the /bin subdir
+    const searchDirs = [basePath, join(basePath, "bin")];
+
+    for (const dir of searchDirs) {
+      try{
+        const entries = await readdir(dir, { withFileTypes: true });
+
+        for (const entry of entries) {
+          if (!entry.isFile() || filePattern.test(entry.name)) 
+            continue
+          const full = join(dir, entry.name);
+
+          // Determine run_dir: if the parent folder is /bin, trim it off
+          const run_dir = dir.endsWith("/bin") ? dir.slice(0, -4) : dir;
+
+          // Make the relative path from the common prefix
+          const relative_filename = full.startsWith(commonPrefix)
+            ? full.slice(commonPrefix.length)
+            : full;
+
+          results.push({
+            relative_filename,
+            full_filename: full,
+            run_dir,
+          });
+        }
+      }catch(ex:unknown){
+        console.warn(ex)
+      }
+    }
+  }
+  return results;
+}
+async function get_all_runners(top_folders:string[]){
+    //const top_folders=["c:\\yigal\\million_try3"]//get_workspace_folders()||[]
+    const sub=get_sub_folders(top_folders)
+    const ans =await findWatchRunners(sub)
+    return ans
+}
+console.log(get_all_runners(["c:\\yigal\\million_try3"]))
